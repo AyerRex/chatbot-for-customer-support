@@ -56,7 +56,7 @@ This will:
 - Serve frontend via Nginx
 
 Includes:
-- backend	FastAPI (Python 3.11)
+- backend	FastAPI (Python 3.10)
 - frontend	React (Node 20 + Nginx)
 - db	PostgreSQL 16
 - rasa	Rasa 3.6
@@ -183,8 +183,3 @@ docker compose down or CTRL+C
 - Multi-language support
 - Vector search for FAQ (OpenAI embeddings)
 - Real-time websocket chat
-
-# 👨‍💻 Author
-Jun Yoon
-
-CSIT321 / University of Wollongong (SIM)
