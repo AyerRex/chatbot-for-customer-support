@@ -1,0 +1,63 @@
+language: en
+
+pipeline:
+  # --- 1. Tokenization (Preprocessing) ---
+  # Splits the user's sentence into individual words (tokens).
+  # E.g., "Check order" -> ["Check", "order"]
+- name: WhitespaceTokenizer
+
+  # --- 2. Featurization (Turning words into numbers) ---
+  # Helps the model recognize patterns defined in your regex lookup tables (e.g., order IDs).
+- name: RegexFeaturizer
+
+  # Extracts lexical features like "is_title_case", "is_digit", or suffixes.
+  # Helpful for distinguishing proper nouns or specific formats.
+- name: LexicalSyntacticFeaturizer
+
+  # Creates a Bag-of-Words representation (counting word occurrences).
+  # Can be configured for n-grams (e.g., sequences of 2-3 words) to capture local context.
+- name: CountVectorsFeaturizer
+- name: CountVectorsFeaturizer
+  analyzer: char_wb     # Looks at character n-grams (sub-words)
+  min_ngram: 1
+  max_ngram: 4          # Helps handle typos and out-of-vocabulary words by looking at word parts.
+
+  # --- 3. The Brain (Deep Learning Model) ---
+  # DIET (Dual Intent and Entity Transformer) handles both Intent Classification 
+  # and Entity Extraction simultaneously.
+  # It uses a Transformer architecture and optimizes a multi-task loss function 
+  # (Cross-entropy for intents, CRF/Masked loss for entities).
+- name: DIETClassifier
+  epochs: 100                    # Number of training iterations (forward/backward passes).
+  constrain_similarities: true   # Normalizes the output vectors to make confidence scores more reliable.
+
+  # --- 4. Post-processing & Specialized Tasks ---
+  # If the training data labels "shirt" as "product", this maps "t-shirt" 
+  # to the same entity value if defined in synonyms.
+- name: EntitySynonymMapper
+
+  # A separate model specifically for handling FAQ retrieval (Small Talk / Knowledge Base).
+  # It works alongside DIET but specializes in selecting the correct response text directly.
+- name: ResponseSelector
+  epochs: 100
+  constrain_similarities: true
+
+  # A safety net. If the NLU confidence for an intent is below the threshold (0.3),
+  # this classifies the input as "nlu_fallback", triggering a "Sorry, I didn't understand" response.
+- name: FallbackClassifier
+  threshold: 0.3
+  ambiguity_threshold: 0.1
+assistant_id: 20251211-105132-few-envelope
+policies:
+# # No configuration for policies was provided. The following default policies were used to train your model.
+# # If you'd like to customize them, uncomment and adjust the policies.
+# # See https://rasa.com/docs/rasa/policies for more information.
+#   - name: MemoizationPolicy
+#   - name: RulePolicy
+#   - name: UnexpecTEDIntentPolicy
+#     max_history: 5
+#     epochs: 100
+#   - name: TEDPolicy
+#     max_history: 5
+#     epochs: 100
+#     constrain_similarities: true

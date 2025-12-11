@@ -1,0 +1,86 @@
+version: "3.1"
+
+nlu:
+  - intent: greet
+    examples: |
+      - hi
+      - hello
+      - hey
+      - good morning
+      - good afternoon
+      - hi there
+      - hello bot
+      - hey assistant
+
+  - intent: product_info
+    examples: |
+      - I want to know about your shirts
+      - Tell me about the shirts
+      - What sizes do you have?
+      - Do you have black shirts?
+      - Any cotton shirts?
+      - Are your shirts unisex?
+      - What is the material of the shirts?
+
+  - intent: order_status
+    examples: |
+      - I want to check my order status
+      - Where is my order?
+      - Track my order
+      - When will my shirt arrive?
+      - status of order [ORD-12345](order_number)
+      - check order [ORD-67890](order_number)
+      - track [ORD-99999](order_number) please
+      - can you check order [ORD-55555](order_number) for me?
+      - my order is [ORD-1001](order_number)
+      - [ORD-2001](order_number)
+      - check [ORD-1002](order_number)
+      - what's the status of [ORD-1001](order_number)?
+
+  - intent: returns
+    examples: |
+      - I want to return a shirt
+      - How do I get a refund?
+      - What is your return policy?
+      - Can I exchange my shirt?
+      - I want to change size, can I exchange?
+
+  - intent: goodbye
+    examples: |
+      - bye
+      - see you
+      - good night
+      - thanks, bye
+      - talk to you later
+      - goodbye
+
+  - intent: abusive
+    examples: |
+      - fuck you
+      - you are useless
+      - stupid bot
+      - you are dumb
+      - this is shit
+      - what a horrible bot
+
+  # 🔹 Regex pattern to help Rasa recognise order numbers like ORD12345, ORD1001, etc.
+  - regex: order_number
+    examples: |
+      - ORD[0-9]+
+
+  - intent: order_status
+    examples: |
+      - I want to check my order status
+      - Where is my order?
+      - Track my order
+      - check status of [ORD-12345](order_number)
+      - track [ORD-67890](order_number)
+      - can you check order [ORD-55555](order_number) for me?
+      - my order is [ORD-1001](order_number)
+      - status for [ORD-99999](order_number) please
+      - [ORD-2001](order_number)
+    
+  # Regular expression, assist Rasa recognize ID form like "ORD-number" 
+  - regex: order_number
+    examples: |
+      - ORD-[0-9]+

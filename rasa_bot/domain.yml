@@ -1,0 +1,74 @@
+version: "3.1"
+
+intents:
+  - greet
+  - product_info
+  - order_status
+  - returns
+  - goodbye
+  - abusive
+  - nlu_fallback
+
+entities:
+  - order_number
+
+slots:
+  order_number:
+    type: text
+    influence_conversation: true
+    mappings:
+      # 1. Priority: If an entity with the string "ORD-xxx" is explicitly found, use it.
+      - type: from_entity
+        entity: order_number
+
+      # 2. Secondly: If the form is asking a question and the user replies with plain text, then it will be treated as an ID.
+      - type: from_text
+        conditions:
+         - active_loop: order_status_form
+         - requested_slot: order_number
+        # Key change: Exclude the triggering intent itself.
+        # In other words: if this statement is used to trigger order_status, don't treat it as a parameter!
+        not_intent: order_status
+
+forms:
+  order_status_form:
+    required_slots:
+      - order_number # The sole purpose of this form is to fill this slot
+        
+actions:
+  - action_check_order_status
+
+responses:
+  utter_greet:
+    - text: "Hi! I'm your shirt assistant. I can help with product info, order status, and returns."
+
+  utter_goodbye:
+    - text: "Thanks for chatting! If you need anything else, just open the chat again."
+
+  utter_abusive:
+    - text: "I'm here to help. Let's keep the conversation respectful."
+
+  # 🔹 Used as fallback response
+  utter_default:
+    - text: "I'm not sure I understood that. I can help with product info, order status, and returns."
+
+  # 🔹 Used when user asks for order status
+  utter_ask_order_number:
+    - text: "Sure, please provide your order number (e.g., ORD12345)."
+
+  # 🔹 New: response for product info
+  utter_product_info:
+    - text: >
+        Our shirts are unisex and available in sizes S–XL. 
+        We have cotton and cotton-blend options in several colors like black, white, and blue.
+
+  # 🔹 New: response for returns / exchanges
+  utter_returns:
+    - text: >
+        You can return or exchange shirts within 30 days as long as they are unworn and with tags.
+        To start a return, please contact support with your order number.
+    - text: "Could you please provide your order number? (e.g., ORD--12345)"
+
+session_config:
+  session_expiration_time: 60
+  carry_over_slots_to_new_session: true

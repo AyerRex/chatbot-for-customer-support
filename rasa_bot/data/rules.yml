@@ -1,0 +1,53 @@
+version: "3.1"
+
+rules:
+  - rule: respond to greeting
+    steps:
+      - intent: greet
+      - action: utter_greet
+
+  - rule: respond to abusive
+    steps:
+      - intent: abusive
+      - action: utter_abusive
+
+  - rule: respond to goodbye
+    steps:
+      - intent: goodbye
+      - action: utter_goodbye
+
+  # Use product_info intent
+  - rule: respond to product info questions
+    steps:
+      - intent: product_info
+      - action: utter_product_info
+
+  # Use returns intent
+  - rule: respond to returns / exchange questions
+    steps:
+      - intent: returns
+      - action: utter_returns
+
+  # Use utter_default as fallback for low-confidence intents
+  - rule: nlu fallback
+    steps:
+      - intent: nlu_fallback
+      - action: utter_default
+        
+  # Activate order 
+  - rule: Activate order status form
+    steps:
+      - intent: order_status
+      - action: order_status_form
+      - active_loop: order_status_form  # Wait until fill the form
+        
+  # Submit form
+  - rule: Submit order status form
+    condition: 
+      - active_loop: order_status_form  # Only suit for working form
+    steps:
+      - action: order_status_form
+      - active_loop: null            # Form finished
+      - slot_was_set:
+          - requested_slot: null     
+      - action: action_check_order_status # Execute backend query logic
