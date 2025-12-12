@@ -1,4 +1,3 @@
-# backend/models.py
 from datetime import datetime, date
 from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Date
 from sqlalchemy.orm import relationship

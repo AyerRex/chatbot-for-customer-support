@@ -1,0 +1,10 @@
+[
+  {
+    "name": "order_number",
+    "pattern": "ORD-[0-9]+"
+  },
+  {
+    "name": "order_number",
+    "pattern": "ORD[0-9]+"
+  }
+]
